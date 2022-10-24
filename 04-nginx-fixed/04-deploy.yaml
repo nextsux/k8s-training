@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myweb
+  namespace: myweb
+  labels:
+    app: myweb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myweb
+  template:
+    metadata:
+      labels:
+        app: myweb
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources:
+          limits:
+            cpu: 20m
+            memory: 100M
+          requests:
+            cpu: "20m"
+            memory: "55M"
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/
+          name: data
+      volumes:
+        - name: data
+          configMap:
+            name: webpage

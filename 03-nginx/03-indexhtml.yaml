@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webpage
+  namespace: myweb
+  labels:
+    app: myweb
+data:
+  index.html: |
+    <html>
+    <body>
+      <h1>Kube it!</h1>
+      <p>jede to!</p>
+    </body>
+    </html>
+

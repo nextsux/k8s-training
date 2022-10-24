@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: myweb
+spec:
+  selector:
+    matchLabels:
+      app: myweb
+  serviceName: myweb
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: myweb
+    spec:
+      containers:
+      - name: updater
+        image: bash
+        volumeMounts:
+        - mountPath: /update.sh
+          name: script
+          subPath: update.sh
+        - name: www
+          mountPath: /usr/share/nginx/html/
+
+        command:
+          - /bin/sh
+          - /update.sh
+
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          limits:
+            cpu: 20m
+            memory: 100M
+          requests:
+            cpu: "20m"
+            memory: "55M"
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html/
+      volumes:
+        - name: script
+          configMap:
+            name: updatescript
+
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Mi
